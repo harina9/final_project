@@ -9,7 +9,7 @@ from weather import *
 
 def initialize_program(data: str, output_dir: str):
     """
-    Gets todays temperature and temp for 5 future days for each city.
+    Initializes program.
     """
     dataframe = unpacking_zip_file(data)
     clean_dataframe = data_cleaning(dataframe)
