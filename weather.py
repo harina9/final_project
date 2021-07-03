@@ -2,12 +2,12 @@ import datetime
 import json
 import math
 import urllib.request as req
-from datetime import datetime
+
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
-
+from data_processing import geolocations
 
 def get_current_and_next_seven_days_weather_data(latitude: str, longitude: str) -> dict:
     """
@@ -68,13 +68,53 @@ def get_max_and_min_temp_for_today_and_next_5_days(
     for i in range(6):
         value_dict = {}
         new_data = int(our_dict["daily"][i]["dt"])
-        normal_data = datetime.utcfromtimestamp(new_data).strftime("%Y-%m-%d")
+        normal_data = datetime.datetime.utcfromtimestamp(new_data).strftime("%Y-%m-%d")
         new_dict[normal_data] = None
         value_dict["minimum"] = our_dict["daily"][i]["temp"]["min"]
         value_dict["maximum"] = our_dict["daily"][i]["temp"]["max"]
         new_dict[normal_data] = value_dict
 
     return new_dict
+
+def get_max_and_min_temp_for_previous_5_days(latitude, longitude):
+    our_list = get_past_five_days_weather_data(latitude, longitude)
+    new_dict = []
+    new_list = []
+    new_list2 = []
+    new_list3 = []
+    new_list4 = []
+    new_list5 = []
+    new_new = []
+
+    for j in range(24):
+        new_list.append(our_list[0]['hourly'][j]['temp'])
+    for j in range(24):
+        new_list2.append(our_list[1]['hourly'][j]['temp'])
+    for j in range(24):
+        new_list3.append(our_list[2]['hourly'][j]['temp'])
+    for j in range(24):
+        new_list4.append(our_list[3]['hourly'][j]['temp'])
+    for j in range(24):
+        new_list5.append(our_list[4]['hourly'][j]['temp'])
+
+    new_new.append(new_list)
+    new_new.append(new_list2)
+    new_new.append(new_list3)
+    new_new.append(new_list4)
+    new_new.append(new_list5)
+
+    for i in range(5):
+        new_data = datetime.datetime.utcfromtimestamp(our_list[i]['current']['dt']).strftime("%Y-%m-%d")
+        new_dict.append(new_data)
+
+    full_full_list = []
+    for j in new_new:
+        full_list = {}
+        full_list['minimum'] = min(j)
+        full_list['maximum'] = max(j)
+        full_full_list.append(full_list)
+
+    return dict(zip(new_dict, full_full_list))
 
 
 def transform_dict_into_dataframe(df: pd.DataFrame):
@@ -86,12 +126,15 @@ def transform_dict_into_dataframe(df: pd.DataFrame):
 
     info_temp = {}
     for index, row in new_df.iterrows():
-        info_temp[row["City"]] = get_max_and_min_temp_for_today_and_next_5_days(
-            row["Latitude"], row["Longitude"]
-        )
+        max_min_next_days = get_max_and_min_temp_for_today_and_next_5_days(
+            row["Latitude"], row["Longitude"])
+        max_min_previous_days = get_max_and_min_temp_for_previous_5_days(
+            row["Latitude"], row["Longitude"])
+        info_temp[row["City"]] = {**max_min_next_days, **max_min_previous_days}
 
-    return pd.DataFrame(info_temp)
+    return pd.DataFrame(info_temp).T
 
+days_with_temp = transform_dict_into_dataframe(geolocations)
 
 def generate_plots(df: pd.DataFrame, output_dir: str) -> None:
     """
@@ -127,3 +170,4 @@ def generate_plots(df: pd.DataFrame, output_dir: str) -> None:
         plt.ylabel("Degrees")
         plt.savefig(path_to_plot / f"{city_name}_max_temperature.png")
         print(f"{path_to_plot}/{city_name}_max_temperature.png file created.")
+
