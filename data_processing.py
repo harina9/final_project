@@ -3,7 +3,7 @@ from multiprocessing import Pool
 import numpy as np
 import pandas as pd
 from geopy import Nominatim
-from preprocessing import df_with_top_cities
+
 
 def get_address_for_hotel(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -34,8 +34,14 @@ def parallelize_dataframe(df: pd.DataFrame, func) -> pd.DataFrame:
     return df
 
 
-if __name__ == '__main__':
-    print(parallelize_dataframe(df_with_top_cities, get_address_for_hotel))
+def split_and_save_updated_dataframe(df: pd.DataFrame, output_dir: str) -> None:
+    """Saves splitted files intro directory."""
+    number = 0
+    split_number = df.index[-1] / 100
+    df_split = np.array_split(df, int(split_number))
+    for i in df_split:
+        i.to_csv(f"{output_dir}/file{number}.csv")
+        number += 1
 
 
 def coordinates_of_city_center(df: pd.DataFrame) -> pd.DataFrame:
@@ -51,4 +57,3 @@ def coordinates_of_city_center(df: pd.DataFrame) -> pd.DataFrame:
     central_lat = (lat_max + lat_min) / 2
     central_lon = (lon_max + lon_min) / 2
     return pd.concat([central_lat, central_lon], axis=1).reset_index()
-

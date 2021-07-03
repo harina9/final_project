@@ -43,6 +43,7 @@ def data_cleaning(df: pd.DataFrame) -> pd.DataFrame:
     res_3 = res_3.dropna(axis=0, how="any")
     return res_3.reset_index(drop=True)
 
+
 def get_most_common(series: pd.Series) -> pd.Series:
     """
     Find the most common value in series.
@@ -62,7 +63,3 @@ def get_dataframe_with_top_cities(df: pd.DataFrame) -> pd.DataFrame:
     """
     cities = df.groupby(["Country"]).agg(get_most_common)["City"]
     return df[df["City"].isin(cities)].sort_values(["City"]).reset_index(drop=True)
-
-dataframe = unpacking_zip_file('hotels.zip')
-clean_dataframe = data_cleaning(dataframe)
-df_with_top_cities = get_dataframe_with_top_cities(clean_dataframe)
