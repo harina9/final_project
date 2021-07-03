@@ -17,4 +17,4 @@ def initialize_program(data: str, output_dir: str):
     geolocations = coordinates_of_city_center(df_with_top_cities)
     days_with_temp = transform_dict_into_dataframe(geolocations)
 
-    generate_plots(geolocations, output_dir)
+    generate_plots(days_with_temp, output_dir)

@@ -52,4 +52,3 @@ def coordinates_of_city_center(df: pd.DataFrame) -> pd.DataFrame:
     central_lon = (lon_max + lon_min) / 2
     return pd.concat([central_lat, central_lon], axis=1).reset_index()
 
-geolocations = coordinates_of_city_center(df_with_top_cities)

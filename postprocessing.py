@@ -1,5 +1,3 @@
-from weather import days_with_temp
-
 def city_and_day_with_max_temp(df):
     maximum_temp = float("-inf")
     for i in df.values:

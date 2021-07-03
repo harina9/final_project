@@ -7,7 +7,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from data_processing import geolocations
+
 
 def get_current_and_next_seven_days_weather_data(latitude: str, longitude: str) -> dict:
     """
@@ -134,40 +134,35 @@ def transform_dict_into_dataframe(df: pd.DataFrame):
 
     return pd.DataFrame(info_temp).T
 
-days_with_temp = transform_dict_into_dataframe(geolocations)
-
 def generate_plots(df: pd.DataFrame, output_dir: str) -> None:
     """
     Generates plots of min and max temperature range for each city and saves them into directory.
     """
+    days = df.columns.values
     for index, row in df.iterrows():
-        city_name = row["City"]
+        city_name = index
 
         path_to_plot = Path(f"{output_dir}/{city_name}/")
         path_to_plot.mkdir(parents=True, exist_ok=True)
 
-        future_days = get_max_and_min_temp_for_today_and_next_5_days(
-            row["Latitude"], row["Longitude"]
-        )
-        values = future_days.values()
-
         minimum_temp = []
-        for i in values:
+        for i in row:
             minimum_temp.append(i["minimum"])
         plt.figure()
-        plt.plot(future_days.keys(), minimum_temp)
+        plt.plot(days, minimum_temp)
         plt.xlabel("Days")
         plt.ylabel("Degrees")
         plt.savefig(path_to_plot / f"{city_name}_min_temperature.png")
         print(f"{path_to_plot}/{city_name}_min_temperature.png file created.")
 
         maximum_temp = []
-        for i in values:
+        for i in row:
             maximum_temp.append(i["maximum"])
         plt.figure()
-        plt.plot(future_days.keys(), maximum_temp)
+        plt.plot(days, maximum_temp)
         plt.xlabel("Days")
         plt.ylabel("Degrees")
         plt.savefig(path_to_plot / f"{city_name}_max_temperature.png")
         print(f"{path_to_plot}/{city_name}_max_temperature.png file created.")
+
 
