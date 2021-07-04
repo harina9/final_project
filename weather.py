@@ -82,45 +82,28 @@ def get_max_and_min_temp_for_previous_5_days(latitude: str, longitude: str) -> d
     :return: dictionary with weather data for each day.
     """
     our_list = get_past_five_days_weather_data(latitude, longitude)
-    new_dict = []
-    new_list = []
-    new_list2 = []
-    new_list3 = []
-    new_list4 = []
-    new_list5 = []
-    new_new = []
 
-    for j in range(24):
-        new_list.append(our_list[0]["hourly"][j]["temp"])
-    for j in range(24):
-        new_list2.append(our_list[1]["hourly"][j]["temp"])
-    for j in range(24):
-        new_list3.append(our_list[2]["hourly"][j]["temp"])
-    for j in range(24):
-        new_list4.append(our_list[3]["hourly"][j]["temp"])
-    for j in range(24):
-        new_list5.append(our_list[4]["hourly"][j]["temp"])
+    list_of_temp_per_hour = []
+    for i in range(5):
+        days_temp_list = []
+        list_of_temp_per_hour.append(days_temp_list)
+        for j in range(24):
+            days_temp = our_list[i]["hourly"][j]["temp"]
+            days_temp_list.append(days_temp)
 
-    new_new.append(new_list)
-    new_new.append(new_list2)
-    new_new.append(new_list3)
-    new_new.append(new_list4)
-    new_new.append(new_list5)
-
+    list_with_dates = []
     for i in range(5):
         new_data = datetime.datetime.utcfromtimestamp(
             our_list[i]["current"]["dt"]
         ).strftime("%Y-%m-%d")
-        new_dict.append(new_data)
+        list_with_dates.append(new_data)
 
-    full_full_list = []
-    for j in new_new:
-        full_list = {}
-        full_list["minimum"] = min(j)
-        full_list["maximum"] = max(j)
-        full_full_list.append(full_list)
+    list_with_max_min_temp = []
+    for j in list_of_temp_per_hour:
+        full_list = {"minimum": min(j), "maximum": max(j)}
+        list_with_max_min_temp.append(full_list)
 
-    return dict(zip(new_dict, full_full_list))
+    return dict(zip(list_with_dates, list_with_max_min_temp))
 
 
 def transform_dict_into_dataframe(df: pd.DataFrame) -> pd.DataFrame:
