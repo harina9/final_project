@@ -1,3 +1,5 @@
+import csv
+
 import pandas as pd
 
 
@@ -45,3 +47,16 @@ def city_and_day_with_max_range_of_min_and_max_temp(df: pd.DataFrame):
                 maximum_range_min_max = round(range_temp, 2)
 
     return maximum_range_min_max
+
+
+def save_all_results_to_csv(df, output_dir):
+    with open(f"{output_dir}/output_data", "a+", newline="") as file:
+        writer = csv.writer(file, delimiter=";")
+        writer.writerow(
+            [
+                city_and_day_with_max_temp(df),
+                city_and_day_with_min_temp(df),
+                city_with_max_range_of_max_tep(df),
+                city_and_day_with_max_range_of_min_and_max_temp(df),
+            ]
+        )

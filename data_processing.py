@@ -2,22 +2,12 @@ from multiprocessing import Pool
 
 import numpy as np
 import pandas as pd
-from geopy import Nominatim
+
+from monroe import encode
 
 
-def get_address_for_hotel(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Adds column with address for each hotel with the help of geopy.
-    :param df: dataframe with most popular cities.
-    :return: dataframe with new column "Address".
-    """
-    location = Nominatim(user_agent="my_application")
-    df["Address"] = df.apply(
-        lambda row: location.reverse(
-            "{}, {}".format(row["Latitude"], row["Longitude"])
-        ),
-        axis=1,
-    )
+def get_geohash_for_df(df: pd.DataFrame) -> pd.DataFrame:
+    df["geohash"] = df.apply(lambda x: encode(x["Latitude"], x["Longitude"]), axis=1)
     return df
 
 

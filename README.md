@@ -1,5 +1,14 @@
 **PythonLab - December 2020**
 
+In order to run this program you need to download this package with all the files inside. In 'data' package you should put zip file for further analysis.
+Then you should open the absolute path to your package with this program.
+You should type the file name 'from_console.py' with 2 parameters separated by whitespace. The first argument is absolute path to your zip file. 
+The second argument is the absolute path of package in which you would like to save your output results.
+
+Example:
+
+from_console.py data/hotels.zip data/some_results
+
 **Final course project**
 
 Необходимо написать консольную утилиту для многопоточной обработки данных, аккумулирования результатов через API из Интернета и их дальнейшего представления на графиках.
